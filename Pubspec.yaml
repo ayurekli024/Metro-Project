@@ -1,0 +1,5 @@
+dependencies:
+  sensors_plus: ^6.1.1 # İvmeölçer ve Jiroskop için
+  geolocator: ^13.0.0  # GPS (Sadece istasyon girişinde kalibrasyon için)
+  sqflite: ^2.3.3      # Metro veri tabanı (Süreler ve duraklar)
+  path: ^1.9.0
