@@ -1,10 +1,7 @@
-final List<MetroStation> ankaraMetro = [
-  MetroStation(
-    id: 1,
-    name: "Kızılay",
-    nextStationDurations: {"Sıhhiye": 95, "Necatibey": 110},
-    exits: ["Güvenpark", "Yüksel", "Gazi Mustafa Kemal"],
-    vagonAdvantage: {1: "Akköprü yönü çıkışına yakın", 6: "Ankaray aktarmasına yakın"}
-  ),
-  // Diğer duraklar...
-];
+final akmStation = MetroStation(
+  id: 10,
+  name: "Atatürk Kültür Merkezi",
+  nextStationDurations: {"Akköprü": 130}, // 2 dk 9 sn yaklaşık 130 sn
+  exits: ["Emniyet Sarayı", "Ankamall"],
+  vagonAdvantage: {5: "İndiğinizde sağınızdaki yürüyen merdiven Ankamall çıkışına gider."}
+);
