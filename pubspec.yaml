@@ -1,0 +1,29 @@
+name: ankara_metro_tracker
+description: Ankara Metrosu sensör tabanlı takip ve navigasyon uygulaması.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sensors_plus: ^6.1.1
+  provider: ^6.1.1
+  vibration: ^1.9.0
+  intl: ^0.19.0
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  flutter_activity_recognition: 4.0.0
+  permission_handler: ^11.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/m_logo.png

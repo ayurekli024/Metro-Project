@@ -6,10 +6,8 @@ import 'logic/sensor_manager.dart';
 import 'ui/screens/home_screen.dart';
 
 void main() {
-  // Flutter bağlamını başlat
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Ekran yönlendirme kısıtlamalarını esnetiyoruz (Tasarımların çalışması için)
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.landscapeLeft,
@@ -17,7 +15,6 @@ void main() {
   ]);
 
   runApp(
-    // Provider kullanarak NavigationEngine'i tüm uygulamaya enjekte ediyoruz
     MultiProvider(
       providers: [
         Provider<SensorManager>(
@@ -26,15 +23,9 @@ void main() {
         ChangeNotifierProxyProvider<SensorManager, NavigationEngine>(
           create: (context) => NavigationEngine(
             sensorManager: context.read<SensorManager>(),
-            selectedVagon: 1, // Varsayılan değer
-            direction: "Kızılay",
           ),
-          update: (context, sensorManager, previous) => previous ?? 
-              NavigationEngine(
-                sensorManager: sensorManager,
-                selectedVagon: 1,
-                direction: "Kızılay",
-              ),
+          update: (context, sensorManager, previous) =>
+          previous ?? NavigationEngine(sensorManager: sensorManager),
         ),
       ],
       child: const AnkaraMetroApp(),
@@ -51,11 +42,10 @@ class AnkaraMetroApp extends StatelessWidget {
       title: 'Ankara Metro Takip',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red, // Metro kırmızı tonu
+        primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Roboto', // Tasarımdaki dijital/modern hava için
+        fontFamily: 'Roboto',
       ),
-      // Başlangıç ekranı olarak HomeScreen'i belirliyoruz
       home: HomeScreen(),
     );
   }

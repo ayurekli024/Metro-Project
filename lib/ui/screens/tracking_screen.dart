@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // State yönetimi için (veya senin tercihin)
+import 'package:provider/provider.dart';
 import '../../logic/navigation_engine.dart';
-import '../widgets/approaching_station_widget.dart'; // Önceki adımda yazdığımız widget
+import '../widgets/approaching_station.dart';
 
 class TrackingScreen extends StatelessWidget {
+  const TrackingScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    // NavigationEngine'i dinliyoruz
     final navEngine = Provider.of<NavigationEngine>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFC0C0C0), // Tasarımdaki gri tonu
+      backgroundColor: const Color(0xFFC0C0C0),
       body: OrientationBuilder(
         builder: (context, orientation) {
           return orientation == Orientation.portrait
@@ -21,7 +22,6 @@ class TrackingScreen extends StatelessWidget {
     );
   }
 
-  // --- DİKEY TASARIM (Portre) ---
   Widget _buildPortraitLayout(BuildContext context, NavigationEngine engine) {
     return SafeArea(
       child: Padding(
@@ -32,54 +32,52 @@ class TrackingScreen extends StatelessWidget {
             const SizedBox(height: 20),
             _buildVagonVisual(engine.selectedVagon, isHorizontal: false),
             const SizedBox(height: 30),
-            _buildTimeCard("Akköprü", "12:16", "Kızılay", "12:28"),
+            _buildTimeCard(
+                engine.currentStation?.name ?? "Mevcut", 
+                "Başladı", 
+                engine.nextStation?.name ?? "Sıradaki", 
+                "Varış"),
             const Spacer(),
             if (engine.isApproaching)
               ApproachingStationWidget(
-                stationName: engine.nextStation?.name ?? "SIHHIYE",
+                stationName: engine.nextStation?.name ?? "İstasyon",
                 isApproaching: true,
               ),
             const SizedBox(height: 20),
-            _buildVerticalTimeline(),
+            Text(
+              engine.isMoving ? "Tren Hareket Halinde" : "Tren Durdu / Bekliyor",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 30),
-            _buildBottomButtons(),
+            _buildBottomButtons(context),
           ],
         ),
       ),
     );
   }
 
-  // --- YATAY TASARIM (Landscape) ---
   Widget _buildLandscapeLayout(BuildContext context, NavigationEngine engine) {
     return SafeArea(
       child: Stack(
         children: [
-          // Sol Üst: Hat Bilgisi
           Positioned(
             top: 20,
             left: 20,
             child: _buildHeader("Ankara Metrosu", "Kızılay - Batıkent"),
           ),
-          
-          // Sağ Üst: Saat ve Hız
           Positioned(
             top: 20,
             right: 20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text("16:45", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                const Text("1 Ocak Pazar", style: TextStyle(fontSize: 14)),
-                const SizedBox(height: 20),
+                const Text("Canlı Takip", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
                 _buildSpeedometer(engine.currentSpeed),
               ],
             ),
           ),
-
-          // Orta: Ana Hat Çizgisi
           Center(child: _buildHorizontalMainLine()),
-
-          // Alt: Vagon Sistemi ve Aktarma Okları
           Positioned(
             bottom: 30,
             left: 50,
@@ -91,18 +89,16 @@ class TrackingScreen extends StatelessWidget {
     );
   }
 
-  // --- YARDIMCI WIDGET'LAR ---
-
   Widget _buildHeader(String title, String subTitle) {
     return Row(
       children: [
-        Image.asset('assets/m_logo.png', width: 40), // Metro logosu
+        const Icon(Icons.train, size: 40, color: Colors.red),
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            Text(subTitle, style: const TextStyle(fontSize: 16)),
+            Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(subTitle, style: const TextStyle(fontSize: 14)),
           ],
         ),
       ],
@@ -120,13 +116,13 @@ class TrackingScreen extends StatelessWidget {
           height: 35,
           margin: const EdgeInsets.symmetric(horizontal: 2),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.black, width: 2),
+            color: isSelected ? Colors.red.withValues(alpha: 0.2) : Colors.white,
+            border: Border.all(color: isSelected ? Colors.red : Colors.black, width: 2),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Center(
             child: isSelected 
-              ? const Icon(Icons.location_on, color: Colors.red) 
+              ? const Icon(Icons.person, color: Colors.red, size: 20) 
               : Text("$vagonNo"),
           ),
         );
@@ -139,59 +135,80 @@ class TrackingScreen extends StatelessWidget {
       width: 80,
       height: 80,
       decoration: BoxDecoration(
+        color: Colors.white,
         shape: BoxShape.circle,
         border: Border.all(color: Colors.black, width: 2),
       ),
       child: Center(
-        child: Text("${speed.toStringAsFixed(0)}\nkm/h", textAlign: TextAlign.center),
+        child: Text("${speed.toStringAsFixed(1)}\nkm/h", textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       ),
     );
   }
 
-  Widget _buildBottomButtons() {
+  Widget _buildBottomButtons(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ElevatedButton(onPressed: () {}, child: const Text("Harita Görünümü")),
-        ElevatedButton(onPressed: () {}, child: const Text("Çıkışa Yönlendir")),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+          onPressed: () => Navigator.pop(context), 
+          child: const Text("Yolculuğu Bitir", style: TextStyle(color: Colors.black))
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () {}, 
+          child: const Text("Çıkış Bilgisi", style: TextStyle(color: Colors.white))
+        ),
       ],
     );
   }
 
-  // Yatay moddaki vagon ve ok sistemi
   Widget _buildLandscapeVagonSystem(NavigationEngine engine) {
     return Column(
       children: [
         _buildVagonVisual(engine.selectedVagon, isHorizontal: true),
         const SizedBox(height: 10),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.arrow_downward), // Tasarımdaki oklar
-            Text("M4 aktarması için karşı platforma geçin"),
-            Icon(Icons.arrow_forward),
+            const Icon(Icons.info_outline, size: 18),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                engine.getVagonGuidance(),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         )
       ],
     );
   }
 
-  // Ortadaki ana çizgi tasarımı
   Widget _buildHorizontalMainLine() {
     return Container(
-      height: 4,
+      height: 6,
       width: double.infinity,
-      color: Colors.black,
+      color: Colors.black87,
       margin: const EdgeInsets.symmetric(horizontal: 60),
     );
   }
 
-  Widget _buildVerticalTimeline() {
-    // Dikey tasarımındaki AKM-Ulus-Sıhhiye-Kızılay hattı
-    return Container(); // İçerisi CustomPaint veya Column ile doldurulabilir
-  }
-
   Widget _buildTimeCard(String s1, String t1, String s2, String t2) {
-     return Container(); // Tasarımdaki saatli kutucuk
+     return Card(
+       elevation: 4,
+       child: Padding(
+         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+         child: Row(
+           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+           children: [
+             Column(children: [Text(s1, style: const TextStyle(fontSize: 16)), Text(t1, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue))]),
+             const Icon(Icons.fast_forward, color: Colors.grey),
+             Column(children: [Text(s2, style: const TextStyle(fontSize: 16)), Text(t2, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green))]),
+           ],
+         ),
+       ),
+     );
   }
 }
