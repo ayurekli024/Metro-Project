@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../data/metro_db.dart';
 import '../../logic/navigation_engine.dart';
 import 'tracking_screen.dart';
+import 'data_logger_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -81,7 +82,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Ankara Metro Takip")),
+      appBar: AppBar(
+        title: const Text("Ankara Metro Takip"),
+        // DÜZELTME BURADA: actions bloğu AppBar'ın içine alındı.
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bug_report),
+            tooltip: "Saha Veri Toplama",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DataLoggerScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -171,7 +187,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   final nextStation = await _calculateNextStation(currentStation);
 
                   if (nextStation != null) {
-                    // DİKKAT: isForwardDirection parametresi buraya eklendi!
                     navEngine.startTrip(currentStation, nextStation, selectedVagon, isForwardDirection);
 
                     Navigator.push(
