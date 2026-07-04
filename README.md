@@ -25,7 +25,7 @@ Uygulama, standart "tren kaç dakika sonra gelecek" uygulamalarından farklı ol
 
 Projeyi yerel ortamında çalıştırmak için aşağıdaki adımları izleyin.
 
-**Not:** Proje, donanım sensörlerine doğrudan erişim sağladığı için bilgisayar emülatörlerinde (x86) **sağlıklı çalışmaz**. Doğrudan fiziksel bir ARM64 Android cihaz (Örn: S24 Ultra vb.) kullanılmalıdır.
+**Not:** Proje, donanım sensörlerine doğrudan erişim sağladığı için bilgisayar emülatörlerinde (x86) **sağlıklı çalışmaz**. Doğrudan fiziksel bir ARM64 Android cihaz kullanılmalıdır.
 
 1. Depoyu klonlayın:
    ```bash
