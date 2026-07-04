@@ -26,7 +26,3 @@ Uygulama, standart "tren kaç dakika sonra gelecek" uygulamalarından farklı ol
 Projeyi yerel ortamında çalıştırmak için aşağıdaki adımları izleyin.
 
 **Not:** Proje, donanım sensörlerine doğrudan erişim sağladığı için bilgisayar emülatörlerinde (x86) **sağlıklı çalışmaz**. Doğrudan fiziksel bir ARM64 Android cihaz kullanılmalıdır.
-
-1. Depoyu klonlayın:
-   ```bash
-   git clone [https://github.com/kullaniciadin/ankara_metro_tracker.git](https://github.com/kullaniciadin/ankara_metro_tracker.git)
